@@ -1,0 +1,98 @@
+﻿<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Surname Search</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f7f7f7; }
+    .card { max-width:640px; margin: 0 auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+    input { padding:10px; width:70%; margin-right:8px; border:1px solid #ccc; border-radius:4px; }
+    button { padding:10px 14px; border:none; background:#1976d2; color:white; border-radius:4px; cursor:pointer; }
+    button:disabled { opacity:0.6; cursor:not-allowed; }
+    .person { padding:8px 0; border-bottom:1px solid #eee; }
+    .small { font-size:0.85em; color:#666; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React (UMD) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function App() {
+      const [surname, setSurname] = useState('');
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState(null);
+      const [data, setData] = useState(null);
+
+      async function search(e) {
+        if (e) e.preventDefault();
+        setError(null);
+        setData(null);
+        const q = surname.trim();
+        if (!q) { setError('Please enter a surname'); return; }
+        setLoading(true);
+        try {
+          const url = `/api/people?surname=${encodeURIComponent(q)}`;
+          const response = await fetch(url);
+          const text = await response.text();
+          let payload = null;
+          try { payload = JSON.parse(text); } catch (err) {
+            throw new Error('Server returned invalid JSON');
+          }
+          if (!response.ok) {
+            setError(payload && payload.error ? payload.error : 'Server error');
+          } else {
+            setData(payload);
+          }
+        } catch (err) {
+          setError('Request failed: ' + err.message);
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      return (
+        <div className="card">
+          <h2>Surname Search</h2>
+          <form onSubmit={search}>
+            <input value={surname} onChange={e=>setSurname(e.target.value)} placeholder="Enter surname" />
+            <button type="submit" disabled={loading}>Search</button>
+          </form>
+
+          {loading && <p className="small">Loading…</p>}
+          {error && <p style={{color:'red'}}>{error}</p>}
+
+          {data && (
+            <div>
+              <p>Matches: {data.count}</p>
+              {data.results.length === 0 ? (
+                <p>No results found.</p>
+              ) : (
+                <div>
+                  {data.results.map(p => (
+                    <div className="person" key={p.id}>
+                      <strong>{p.firstName} {p.surname}</strong> — age {p.age}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          <hr />
+          <p className="small">This page is served by Spring Boot. Use the search form to call <code>/api/people</code>.</p>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
