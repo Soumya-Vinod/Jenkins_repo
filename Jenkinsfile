@@ -1,29 +1,28 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'NodeJS'
+    }
+
     stages {
 
-        stage('Compile') {
+        stage('Install Dependencies') {
             steps {
-                bat 'javac Factorial.java'
+                bat 'npm install'
             }
         }
 
-        stage('Run') {
+        stage('Run Application') {
             steps {
-                bat 'java Factorial'
+                bat 'npm start'
             }
         }
     }
 
     post {
-    success {
-        emailext (
-            subject: "Build Successful ✅",
-            body: "Factorial pipeline built successfully.",
-            to: "soumyav0212@gmail.com,2025.soumya.vinod@ves.ac.in"
-        )
+        success {
+            echo 'Node.js Application Deployed Successfully!'
+        }
     }
-}
-
 }
