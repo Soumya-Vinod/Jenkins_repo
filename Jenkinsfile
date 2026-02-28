@@ -17,12 +17,13 @@ pipeline {
     }
 
     post {
-        success {
-            emailext (
-                subject: "Jenkins Build Success",
-                body: "Your Java Factorial Pipeline built successfully!",
-                to: "2025.soumya.vinod@ves.ac.in"
-            )
-        }
-    }
+success {
+emailext (
+subject: "Build Successful ✅",
+body: "Factorial pipeline built successfully.",
+to: "soumyav0212@gmail.com",
+cc: "2025.soumya.vinod@ves.ac.in"
+)
+}
+}
 }
