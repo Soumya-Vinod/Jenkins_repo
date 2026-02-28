@@ -1,4 +1,3 @@
-package Jenkins_repo;
 public class Factorial {
     public static long findFactorial(int n) {
         if(n < 0) return -1;

@@ -21,7 +21,7 @@ pipeline {
             emailext (
                 subject: "Jenkins Build Success",
                 body: "Your Java Factorial Pipeline built successfully!",
-                to: "2025.soumya.vinod@ves.ac.in"
+                to: "soumyav0212@gmail.com"
             )
         }
     }
