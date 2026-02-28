@@ -1,28 +1,18 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'NodeJS'
-    }
-
     stages {
 
-        stage('Install Dependencies') {
+        stage('Build') {
             steps {
-                bat 'npm install'
+                bat 'mvn clean package'
             }
         }
 
-        stage('Run Application') {
+        stage('Archive') {
             steps {
-                bat 'npm start'
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Node.js Application Deployed Successfully!'
         }
     }
 }

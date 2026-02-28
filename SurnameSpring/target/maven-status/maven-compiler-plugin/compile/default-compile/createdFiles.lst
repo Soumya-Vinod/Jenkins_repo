@@ -1,0 +1,4 @@
+com\example\surnameapi\service\PersonService.class
+com\example\surnameapi\SurnameApiApplication.class
+com\example\surnameapi\controller\PeopleController.class
+com\example\surnameapi\model\Person.class
